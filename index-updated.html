@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <title>A-Level Mechanics Lab</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1220;
+      --panel: #121d2e;
+      --panel-2: #18263a;
+      --text: #edf3fb;
+      --muted: #a8b6c9;
+      --line: #2a3a50;
+      --accent: #69d5c4;
+      --danger: #ff9e9e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.5 system-ui, -apple-system, Segoe UI, sans-serif;
+    }
+    header, main { width: min(1100px, calc(100% - 32px)); margin-inline: auto; }
+    header { padding: 28px 0 18px; }
+    h1 { margin: 0 0 6px; font-size: clamp(1.6rem, 4vw, 2.2rem); }
+    h2 { margin: 0 0 10px; font-size: 1.05rem; }
+    p { margin: 6px 0 0; }
+    .muted { color: var(--muted); }
+    .layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 16px; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      min-width: 0;
+    }
+    .stage {
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #08111e;
+    }
+    canvas { display: block; width: 100%; height: auto; aspect-ratio: 760 / 480; }
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    button {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 9px 13px;
+      border-radius: 9px;
+      cursor: pointer;
+      font: inherit;
+    }
+    button:hover { border-color: var(--accent); }
+    button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+    .metric { padding: 10px; background: var(--panel-2); border-radius: 9px; }
+    .metric span { display: block; color: var(--muted); font-size: .85rem; }
+    .metric strong { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+    .status { padding: 10px 12px; border-radius: 9px; background: var(--panel-2); overflow-wrap: anywhere; }
+    .status.error { color: var(--danger); border: 1px solid #754444; }
+    .status.ok { color: var(--accent); }
+    kbd {
+      border: 1px solid #526177; border-radius: 5px; padding: 1px 6px;
+      background: var(--panel-2); font: inherit; font-size: .9em;
+    }
+    code { color: #bcebe3; }
+    .note { font-size: .9rem; }
+    footer { padding: 18px 0 32px; color: var(--muted); font-size: .9rem; }
+    @media (max-width: 760px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>A-Level Mechanics Lab</h1>
+    <p class="muted">A small browser-based test bench for your own JavaScript physics engine.</p>
+  </header>
+
+  <main>
+    <div class="layout">
+      <section class="panel" aria-labelledby="simulation-heading">
+        <h2 id="simulation-heading">Simulation</h2>
+        <div class="stage">
+          <canvas id="game" width="760" height="480" aria-label="Physics simulation canvas">
+            Your browser does not support HTML canvas.
+          </canvas>
+        </div>
+        <div class="controls">
+          <button id="start-button" type="button">Start / pause</button>
+          <button id="reset-button" type="button">Reset</button>
+        </div>
+        <p class="muted note">
+          Keyboard controls are available to your script: <kbd>↑</kbd> <kbd>↓</kbd>
+          <kbd>←</kbd> <kbd>→</kbd>. Click the page first if the keys don't respond.
+        </p>
+      </section>
+
+      <aside class="panel">
+        <h2>Student script</h2>
+        <p class="muted note">
+          This page attempts to load <code>student.js</code> from the same folder as this file.
+          Add that file to the repository's <code>main</code> branch.
+        </p>
+        <div id="script-status" class="status" role="status" aria-live="polite" style="margin-top:12px">
+          Waiting for student.js…
+        </div>
+
+        <h2 style="margin-top:20px">Readout</h2>
+        <p class="muted note">These values are examples from the page's basic test model. Your student can replace the model in student.js.</p>
+        <div class="metrics" aria-live="polite">
+          <div class="metric"><span>Position x</span><strong id="pos-x">0.00</strong></div>
+          <div class="metric"><span>Position y</span><strong id="pos-y">0.00</strong></div>
+          <div class="metric"><span>Velocity x</span><strong id="vel-x">0.00</strong></div>
+          <div class="metric"><span>Velocity y</span><strong id="vel-y">0.00</strong></div>
+        </div>
+
+        <h2 style="margin-top:20px">Student interface</h2>
+        <p class="muted note">
+          Your script can use the <code>MechanicsLab</code> object to access the canvas,
+          drawing context, keyboard state, simulation controls and readout fields.
+          See the starter example below.
+        </p>
+      </aside>
+    </div>
+
+    <section class="panel" style="margin-top:16px">
+      <h2>Starter script: student.js</h2>
+      <p class="muted note">Create a file called <code>student.js</code> beside <code>index.html</code>. This minimal example draws a circle and moves it with the arrow keys. It is a starting point, not a complete physics engine.</p>
+      <pre style="white-space:pre-wrap; overflow-wrap:anywhere; background:#08111e; border:1px solid var(--line); padding:12px; border-radius:9px;"><code>MechanicsLab.setStudentStatus("Student script loaded.");
+
+let x = 100;
+let y = 100;
+let vx = 0;
+let vy = 0;
+
+MechanicsLab.onReset(() => {
+  x = 100; y = 100; vx = 0; vy = 0;
+});
+
+MechanicsLab.onUpdate((dt, keys) => {
+  // Replace this simple example with your own force model.
+  const acceleration = 180; // pixels/s²
+  if (keys.ArrowRight) vx += acceleration * dt;
+  if (keys.ArrowLeft)  vx -= acceleration * dt;
+  if (keys.ArrowDown)  vy += acceleration * dt;
+  if (keys.ArrowUp)    vy -= acceleration * dt;
+
+  x += vx * dt;
+  y += vy * dt;
+
+  // Keep the circle inside the canvas for this starter example.
+  x = Math.max(10, Math.min(MechanicsLab.width - 10, x));
+  y = Math.max(10, Math.min(MechanicsLab.height - 10, y));
+
+  MechanicsLab.setReadout({ x, y, vx, vy });
+});
+
+MechanicsLab.onDraw((ctx) => {
+  ctx.beginPath();
+  ctx.arc(x, y, 10, 0, Math.PI * 2);
+  ctx.fillStyle = "#69d5c4";
+  ctx.fill();
+});</code></pre>
+      <p class="muted note">For real A-level mechanics, define your units and coordinate system explicitly. The starter example uses screen pixels and a simple acceleration rule.</p>
+    </section>
+  </main>
+
+  <footer>
+    GitHub Pages serves the page and script as static files. Only run code you trust; JavaScript loaded into this page can access and modify the page.
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const canvas = document.getElementById("game");
+      const ctx = canvas.getContext("2d");
+      const statusEl = document.getElementById("script-status");
+      const startButton = document.getElementById("start-button");
+      const resetButton = document.getElementById("reset-button");
+      const readoutEls = {
+        x: document.getElementById("pos-x"),
+        y: document.getElementById("pos-y"),
+        vx: document.getElementById("vel-x"),
+        vy: document.getElementById("vel-y")
+      };
+
+      const updateCallbacks = [];
+      const drawCallbacks = [];
+      const resetCallbacks = [];
+      const keys = Object.create(null);
+
+      let running = true;
+      let previousTime = null;
+      let studentLoaded = false;
+      let trackData = null;
+
+      function setStatus(message, kind = "") {
+        statusEl.textContent = message;
+        statusEl.className = "status" + (kind ? " " + kind : "");
+      }
+
+      const MechanicsLab = {
+        canvas,
+        ctx,
+        width: canvas.width,
+        height: canvas.height,
+        get keys() { return { ...keys }; },
+        get running() { return running; },
+        setStudentStatus(message) { setStatus(String(message), "ok"); },
+        onUpdate(fn) {
+          if (typeof fn !== "function") throw new TypeError("onUpdate expects a function");
+          updateCallbacks.push(fn);
+        },
+        onDraw(fn) {
+          if (typeof fn !== "function") throw new TypeError("onDraw expects a function");
+          drawCallbacks.push(fn);
+        },
+        onReset(fn) {
+          if (typeof fn !== "function") throw new TypeError("onReset expects a function");
+          resetCallbacks.push(fn);
+        },
+        setReadout(values = {}) {
+          for (const key of ["x", "y", "vx", "vy"]) {
+            if (Number.isFinite(values[key])) readoutEls[key].textContent = values[key].toFixed(2);
+          }
+        },
+        pause() { running = false; startButton.textContent = "Resume"; },
+        start() { running = true; previousTime = null; startButton.textContent = "Pause"; },
+        reset() {
+          for (const fn of resetCallbacks) {
+            try { fn(); } catch (error) { reportError(error); }
+          }
+          this.setReadout({ x: 0, y: 0, vx: 0, vy: 0 });
+          draw();
+        }
+      };
+
+      // Expose a deliberately small interface for the student's script.
+      window.MechanicsLab = MechanicsLab;
+
+      function reportError(error) {
+        console.error(error);
+        setStatus("Script error: " + (error && error.message ? error.message : String(error)), "error");
+        running = false;
+        startButton.textContent = "Resume";
+      }
+
+      function drawBackground() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#08111e";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = "#1a2a3e";
+        ctx.lineWidth = 1;
+        for (let x = 20; x < canvas.width; x += 40) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        }
+        for (let y = 20; y < canvas.height; y += 40) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        }
+
+        ctx.fillStyle = "#a8b6c9";
+        ctx.font = "13px system-ui, sans-serif";
+        ctx.fillText("Canvas: 760 × 480 screen units", 14, canvas.height - 14);
+      }
+
+      function drawBarrier(points, color) {
+        if (!Array.isArray(points) || points.length < 2) return;
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+        if (trackData && trackData.closed) ctx.closePath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 5;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.stroke();
+      }
+
+      function drawTrack() {
+        if (!trackData || !trackData.barriers) return;
+        const left = trackData.barriers.left;
+        const right = trackData.barriers.right;
+
+        // Shade the corridor between the left and right barrier paths.
+        if (Array.isArray(left) && Array.isArray(right) && left.length > 1 && right.length > 1) {
+          ctx.beginPath();
+          ctx.moveTo(left[0].x, left[0].y);
+          for (let i = 1; i < left.length; i++) ctx.lineTo(left[i].x, left[i].y);
+          for (let i = right.length - 1; i >= 0; i--) ctx.lineTo(right[i].x, right[i].y);
+          ctx.closePath();
+          ctx.fillStyle = "#203c46";
+          ctx.fill();
+        }
+
+        drawBarrier(left, "#69d5c4");
+        drawBarrier(right, "#f2bd6b");
+        ctx.fillStyle = "#edf3fb";
+        ctx.font = "bold 13px system-ui, sans-serif";
+        ctx.fillText(trackData.name || "Loaded track", 14, 22);
+      }
+
+      function draw() {
+        drawBackground();
+        drawTrack(); // Track renders independently of student.js.
+        for (const fn of drawCallbacks) {
+          try { fn(ctx); } catch (error) { reportError(error); }
+        }
+      }
+
+      async function loadTrack() {
+        try {
+          const response = await fetch("./tracks/track-01.json", { cache: "no-store" });
+          if (!response.ok) throw new Error("HTTP " + response.status);
+          const data = await response.json();
+          if (!data.barriers ||
+              !Array.isArray(data.barriers.left) ||
+              !Array.isArray(data.barriers.right) ||
+              data.barriers.left.length < 2 ||
+              data.barriers.right.length < 2) {
+            throw new Error("Track JSON must contain left and right barrier point arrays.");
+          }
+          for (const side of [data.barriers.left, data.barriers.right]) {
+            for (const point of side) {
+              if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) {
+                throw new Error("Every barrier point must have numeric x and y coordinates.");
+              }
+            }
+          }
+          trackData = data;
+          draw();
+          if (!studentLoaded) setStatus("Track loaded. Waiting for student.js…");
+        } catch (error) {
+          console.error("Could not load track JSON:", error);
+          setStatus("Could not load tracks/track-01.json: " + error.message, "error");
+        }
+      }
+
+      function frame(timestamp) {
+        if (previousTime === null) previousTime = timestamp;
+        // Clamp dt to avoid a huge simulation jump after switching tabs.
+        const dt = Math.min((timestamp - previousTime) / 1000, 0.033);
+        previousTime = timestamp;
+
+        if (running) {
+          for (const fn of updateCallbacks) {
+            try { fn(dt, { ...keys }); } catch (error) { reportError(error); }
+          }
+        }
+        draw();
+        requestAnimationFrame(frame);
+      }
+
+      const allowedKeys = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "]);
+      window.addEventListener("keydown", (event) => {
+        if (allowedKeys.has(event.key)) event.preventDefault();
+        keys[event.key === " " ? "Space" : event.key] = true;
+      });
+      window.addEventListener("keyup", (event) => {
+        keys[event.key === " " ? "Space" : event.key] = false;
+      });
+      window.addEventListener("blur", () => {
+        for (const key of Object.keys(keys)) keys[key] = false;
+      });
+
+      startButton.addEventListener("click", () => {
+        if (running) MechanicsLab.pause();
+        else MechanicsLab.start();
+      });
+      resetButton.addEventListener("click", () => MechanicsLab.reset());
+
+      // A missing student.js is expected until the student creates it.
+      const script = document.createElement("script");
+      script.src = "./student.js";
+      script.onload = () => {
+        studentLoaded = true;
+        setStatus("student.js loaded successfully.", "ok");
+      };
+      script.onerror = () => {
+        // A missing student script should not prevent the track from being displayed.
+        setStatus("student.js not found. The track is still displayed; add student.js when ready.");
+      };
+      document.body.appendChild(script);
+
+      // Load the track independently from the student script.
+      loadTrack();
+      draw();
+      requestAnimationFrame(frame);
+    })();
+  </script>
+</body>
+</html>

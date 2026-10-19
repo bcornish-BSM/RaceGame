@@ -1,0 +1,137 @@
+{
+  "name": "Track 01 - Oval",
+  "version": 1,
+  "coordinateSystem": {
+    "width": 760,
+    "height": 480,
+    "origin": "top-left",
+    "xDirection": "right",
+    "yDirection": "down",
+    "units": "pixels"
+  },
+  "closed": true,
+  "direction": "clockwise",
+  "barriers": {
+    "left": [
+      {
+        "x": 145,
+        "y": 105
+      },
+      {
+        "x": 230,
+        "y": 65
+      },
+      {
+        "x": 380,
+        "y": 55
+      },
+      {
+        "x": 530,
+        "y": 65
+      },
+      {
+        "x": 615,
+        "y": 105
+      },
+      {
+        "x": 650,
+        "y": 175
+      },
+      {
+        "x": 650,
+        "y": 305
+      },
+      {
+        "x": 615,
+        "y": 375
+      },
+      {
+        "x": 530,
+        "y": 415
+      },
+      {
+        "x": 380,
+        "y": 425
+      },
+      {
+        "x": 230,
+        "y": 415
+      },
+      {
+        "x": 145,
+        "y": 375
+      },
+      {
+        "x": 110,
+        "y": 305
+      },
+      {
+        "x": 110,
+        "y": 175
+      }
+    ],
+    "right": [
+      {
+        "x": 220,
+        "y": 165
+      },
+      {
+        "x": 275,
+        "y": 140
+      },
+      {
+        "x": 380,
+        "y": 130
+      },
+      {
+        "x": 485,
+        "y": 140
+      },
+      {
+        "x": 540,
+        "y": 165
+      },
+      {
+        "x": 565,
+        "y": 200
+      },
+      {
+        "x": 565,
+        "y": 280
+      },
+      {
+        "x": 540,
+        "y": 315
+      },
+      {
+        "x": 485,
+        "y": 340
+      },
+      {
+        "x": 380,
+        "y": 350
+      },
+      {
+        "x": 275,
+        "y": 340
+      },
+      {
+        "x": 220,
+        "y": 315
+      },
+      {
+        "x": 195,
+        "y": 280
+      },
+      {
+        "x": 195,
+        "y": 200
+      }
+    ]
+  },
+  "notes": [
+    "Barrier points are ordered around the circuit.",
+    "Connect the final point to the first when closed is true.",
+    "These coordinates define the visual boundaries; collision detection is a separate step."
+  ]
+}
