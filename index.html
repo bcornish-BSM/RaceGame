@@ -46,7 +46,10 @@
       background: #08111e;
     }
     canvas { display: block; width: 100%; height: auto; aspect-ratio: 760 / 480; }
-    .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+    .track-selector { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+    .track-selector label { color: var(--muted); }
+    .track-selector select { border: 1px solid var(--line); background: var(--panel-2); color: var(--text); padding: 9px 12px; border-radius: 9px; font: inherit; }
     button {
       border: 1px solid var(--line);
       background: var(--panel-2);
@@ -96,6 +99,13 @@
           <button id="start-button" type="button">Start / pause</button>
           <button id="reset-button" type="button">Reset</button>
         </div>
+        <div class="track-selector">
+          <label for="track-selector">Track selector</label>
+          <select id="track-selector" aria-label="Choose race track">
+            <option value="oval">Oval</option>
+            <option value="serpentine">Serpentine</option>
+          </select>
+        </div>
         <p class="muted note">
           Keyboard controls are available to your script: <kbd>↑</kbd> <kbd>↓</kbd>
           <kbd>←</kbd> <kbd>→</kbd>. Click the page first if the keys don't respond.
@@ -135,6 +145,7 @@
       const statusEl = document.getElementById("script-status");
       const startButton = document.getElementById("start-button");
       const resetButton = document.getElementById("reset-button");
+      const trackSelector = document.getElementById("track-selector");
       const readoutEls = {
         x: document.getElementById("pos-x"),
         y: document.getElementById("pos-y"),
@@ -145,6 +156,7 @@
       const updateCallbacks = [];
       const drawCallbacks = [];
       const resetCallbacks = [];
+      const trackChangeCallbacks = [];
       const keys = Object.create(null);
 
       let running = true;
@@ -164,6 +176,8 @@
         height: canvas.height,
         get keys() { return { ...keys }; },
         get running() { return running; },
+        get trackUrl() { return "./tracks/" + trackSelector.value + ".json"; },
+        get trackName() { return trackSelector.options[trackSelector.selectedIndex].text; },
         setStudentStatus(message) { setStatus(String(message), "ok"); },
         onUpdate(fn) {
           if (typeof fn !== "function") throw new TypeError("onUpdate expects a function");
@@ -176,6 +190,10 @@
         onReset(fn) {
           if (typeof fn !== "function") throw new TypeError("onReset expects a function");
           resetCallbacks.push(fn);
+        },
+        onTrackChange(fn) {
+          if (typeof fn !== "function") throw new TypeError("onTrackChange expects a function");
+          trackChangeCallbacks.push(fn);
         },
         setReadout(values = {}) {
           for (const key of ["x", "y", "vx", "vy"]) {
@@ -268,7 +286,7 @@
 
       async function loadTrack() {
         try {
-          const response = await fetch("./tracks/track-01.json", { cache: "no-store" });
+          const response = await fetch(MechanicsLab.trackUrl, { cache: "no-store" });
           if (!response.ok) throw new Error("HTTP " + response.status);
           const data = await response.json();
           if (!data.barriers ||
@@ -288,9 +306,10 @@
           trackData = data;
           draw();
           if (!studentLoaded) setStatus("Track loaded. Waiting for student.js…");
+          else setStatus(MechanicsLab.trackName + " track loaded.", "ok");
         } catch (error) {
           console.error("Could not load track JSON:", error);
-          setStatus("Could not load tracks/track-01.json: " + error.message, "error");
+          setStatus("Could not load " + MechanicsLab.trackUrl + ": " + error.message, "error");
         }
       }
 
@@ -326,6 +345,11 @@
         else MechanicsLab.start();
       });
       resetButton.addEventListener("click", () => MechanicsLab.reset());
+      trackSelector.addEventListener("change", async () => {
+        await loadTrack();
+        await Promise.all(trackChangeCallbacks.map(fn => Promise.resolve(fn())));
+        MechanicsLab.reset();
+      });
 
       // A missing student.js is expected until the student creates it.
       const script = document.createElement("script");
