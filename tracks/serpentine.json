@@ -1,0 +1,121 @@
+{
+  "name": "Serpentine",
+  "version": 1,
+  "coordinateSystem": {
+    "width": 760,
+    "height": 480,
+    "origin": "top-left",
+    "xDirection": "right",
+    "yDirection": "down",
+    "units": "pixels"
+  },
+  "closed": false,
+  "direction": "left-to-right",
+  "barriers": {
+    "left": [
+      {
+        "x": 35,
+        "y": 205
+      },
+      {
+        "x": 90,
+        "y": 280
+      },
+      {
+        "x": 150,
+        "y": 330
+      },
+      {
+        "x": 215,
+        "y": 310
+      },
+      {
+        "x": 280,
+        "y": 230
+      },
+      {
+        "x": 345,
+        "y": 140
+      },
+      {
+        "x": 410,
+        "y": 90
+      },
+      {
+        "x": 475,
+        "y": 120
+      },
+      {
+        "x": 540,
+        "y": 200
+      },
+      {
+        "x": 605,
+        "y": 280
+      },
+      {
+        "x": 670,
+        "y": 315
+      },
+      {
+        "x": 725,
+        "y": 265
+      }
+    ],
+    "right": [
+      {
+        "x": 35,
+        "y": 275
+      },
+      {
+        "x": 90,
+        "y": 350
+      },
+      {
+        "x": 150,
+        "y": 400
+      },
+      {
+        "x": 215,
+        "y": 380
+      },
+      {
+        "x": 280,
+        "y": 300
+      },
+      {
+        "x": 345,
+        "y": 210
+      },
+      {
+        "x": 410,
+        "y": 160
+      },
+      {
+        "x": 475,
+        "y": 190
+      },
+      {
+        "x": 540,
+        "y": 270
+      },
+      {
+        "x": 605,
+        "y": 350
+      },
+      {
+        "x": 670,
+        "y": 385
+      },
+      {
+        "x": 725,
+        "y": 335
+      }
+    ]
+  },
+  "notes": [
+    "An open S-shaped serpentine course running from left to right.",
+    "The two barrier arrays are ordered from the start to the finish.",
+    "Coordinates define the visual boundaries; collision detection uses the corridor between them."
+  ]
+}
