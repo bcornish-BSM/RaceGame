@@ -39,7 +39,7 @@ async function loadTrack() {
             ? window.location.href
             : window.location.href + "/";
 
-        const trackUrl = new URL("tracks/track-01.json", baseUrl);
+        const trackUrl = new URL(MechanicsLab.trackUrl, baseUrl);
         const response = await fetch(trackUrl);
 
         if (!response.ok) {
@@ -62,19 +62,23 @@ async function loadTrack() {
             ...right.slice().reverse()
         ];
 
+        const start = track.name === "Serpentine" ? { x: 45, y: 240 } : { x: 380, y: 92 };
+        position = { ...start };
+        velocity = { x: 0, y: 0 };
         MechanicsLab.setStudentStatus(
-            "Track loaded. Use W, A, S and D to drive."
+            track.name + " loaded. Use W, A, S and D to drive."
         );
     } catch (error) {
         console.error("Could not load track:", error);
 
         MechanicsLab.setStudentStatus(
-            "Could not load track JSON. Check tracks/track-01.json."
+            "Could not load the selected track JSON file."
         );
     }
 }
 
 loadTrack();
+MechanicsLab.onTrackChange(loadTrack);
 
 // ============================================
 // 3. PHYSICS FUNCTIONS
@@ -257,7 +261,7 @@ function resetCar() {
     fuelMass = INITIAL_FUEL_MASS;
     mass = CAR_MASS + fuelMass;
 
-    position = { x: 380, y: 92 };
+    position = track && track.name === "Serpentine" ? { x: 45, y: 240 } : { x: 380, y: 92 };
     velocity = { x: 0, y: 0 };
 
     elapsedTime = 0;
