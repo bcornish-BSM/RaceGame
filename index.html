@@ -103,11 +103,6 @@
       </section>
 
       <aside class="panel">
-        <h2>Student script</h2>
-        <p class="muted note">
-          This page attempts to load <code>student.js</code> from the same folder as this file.
-          Add that file to the repository's <code>main</code> branch.
-        </p>
         <div id="script-status" class="status" role="status" aria-live="polite" style="margin-top:12px">
           Waiting for student.js…
         </div>
@@ -130,46 +125,6 @@
       </aside>
     </div>
 
-    <section class="panel" style="margin-top:16px">
-      <h2>Starter script: student.js</h2>
-      <p class="muted note">Create a file called <code>student.js</code> beside <code>index.html</code>. This minimal example draws a circle and moves it with the arrow keys. It is a starting point, not a complete physics engine.</p>
-      <pre style="white-space:pre-wrap; overflow-wrap:anywhere; background:#08111e; border:1px solid var(--line); padding:12px; border-radius:9px;"><code>MechanicsLab.setStudentStatus("Student script loaded.");
-
-let x = 100;
-let y = 100;
-let vx = 0;
-let vy = 0;
-
-MechanicsLab.onReset(() => {
-  x = 100; y = 100; vx = 0; vy = 0;
-});
-
-MechanicsLab.onUpdate((dt, keys) => {
-  // Replace this simple example with your own force model.
-  const acceleration = 180; // pixels/s²
-  if (keys.ArrowRight) vx += acceleration * dt;
-  if (keys.ArrowLeft)  vx -= acceleration * dt;
-  if (keys.ArrowDown)  vy += acceleration * dt;
-  if (keys.ArrowUp)    vy -= acceleration * dt;
-
-  x += vx * dt;
-  y += vy * dt;
-
-  // Keep the circle inside the canvas for this starter example.
-  x = Math.max(10, Math.min(MechanicsLab.width - 10, x));
-  y = Math.max(10, Math.min(MechanicsLab.height - 10, y));
-
-  MechanicsLab.setReadout({ x, y, vx, vy });
-});
-
-MechanicsLab.onDraw((ctx) => {
-  ctx.beginPath();
-  ctx.arc(x, y, 10, 0, Math.PI * 2);
-  ctx.fillStyle = "#69d5c4";
-  ctx.fill();
-});</code></pre>
-      <p class="muted note">For real A-level mechanics, define your units and coordinate system explicitly. The starter example uses screen pixels and a simple acceleration rule.</p>
-    </section>
   </main>
 
   <footer>
