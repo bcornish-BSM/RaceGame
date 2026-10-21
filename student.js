@@ -5,9 +5,9 @@
 // 1. CAR AND PHYSICS SETTINGS
 // ============================================
 
-const CAR_MASS = 500;          // kg, empty car
+const CAR_MASS = 50;          // kg, empty car
 const INITIAL_FUEL_MASS = 500; // kg
-const FORCE = 1000;            // N
+const FORCE = 5000;            // N
 const TIME_STEP = 0.01;        // seconds
 
 // Track coordinates are pixels.
@@ -15,7 +15,7 @@ const TIME_STEP = 0.01;        // seconds
 const PIXELS_PER_METRE = 10;
 
 const CAR_RADIUS = 8;           // pixels
-const FUEL_USED_PER_SECOND = 10; // kg/s while a key is held
+const FUEL_USED_PER_SECOND = 5; // kg/s while a key is held
 
 let fuelMass = INITIAL_FUEL_MASS;
 let mass = CAR_MASS + fuelMass;
