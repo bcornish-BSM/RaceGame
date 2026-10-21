@@ -62,7 +62,11 @@ async function loadTrack() {
             ...right.slice().reverse()
         ];
 
-        const start = track.name === "Serpentine" ? { x: 45, y: 240 } : { x: 380, y: 92 };
+        const start = track.name === "Serpentine"
+            ? { x: 45, y: 240 }
+            : track.name === "Monaco Grand Prix"
+                ? { x: 260, y: 390 }
+                : { x: 380, y: 92 };
         position = { ...start };
         velocity = { x: 0, y: 0 };
         MechanicsLab.setStudentStatus(
@@ -261,7 +265,13 @@ function resetCar() {
     fuelMass = INITIAL_FUEL_MASS;
     mass = CAR_MASS + fuelMass;
 
-    position = track && track.name === "Serpentine" ? { x: 45, y: 240 } : { x: 380, y: 92 };
+    position = !track
+        ? { x: 380, y: 92 }
+        : track.name === "Serpentine"
+            ? { x: 45, y: 240 }
+            : track.name === "Monaco Grand Prix"
+                ? { x: 260, y: 390 }
+                : { x: 380, y: 92 };
     velocity = { x: 0, y: 0 };
 
     elapsedTime = 0;
